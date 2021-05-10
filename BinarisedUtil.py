@@ -21,7 +21,8 @@ class BinarisedUtil:
 
     def ClampWeights(self):
         for index in range(self.num_of_params):
-            self.target_modules[index].data.clamp(-1.0, 1.0, out=self.target_modules[index].data)
+            #self.target_modules[index].data.clamp(-1.0, 1.0, out=self.target_modules[index].data)
+            self.target_modules[index].data = self.target_modules[index].data.clamp(min=-1.0, max=1.0)
 
     def SaveWeights(self):
         for index in range(self.num_of_params):
@@ -37,7 +38,7 @@ class BinarisedUtil:
                     n)
             elif len(s) == 2:
                 alpha = self.target_modules[index].data.norm(1, 1, keepdim=True).div(n)
-            self.target_modules[index].data.sign().mul(alpha.expand(s), out=self.target_modules[index].data)
+            self.target_modules[index].data = self.target_modules[index].data.sign().mul(alpha.expand(s))
 
     def Binarization(self):
         self.ClampWeights()
